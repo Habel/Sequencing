@@ -1,1 +1,1 @@
-web: python server.py ${PORT}
+web: python start.py
