@@ -1,0 +1,43 @@
+$def with (privilege)
+
+$def create_output(label, name):
+    <h4 class="output">$:label = <span id="$:name"></span></h4>
+
+$def create_pos_tracker(position_for, id):
+    <p>Position in $:position_for: <span id="pos_$:id"></span></p>
+
+$def create_input(name, constraints, id):
+    <h3>$:name [$:constraints]</h3>
+    <textarea class="tracked" cols="50" rows="10" id="$:id"></textarea> <br />
+    $:create_pos_tracker(name, id)
+
+<script type="text/javascript" src="static/output.js"></script>
+<div id="app">
+    <div id="top">
+        <h1>Input Sequences</h1>
+        <span id="error_message"></span>
+    </div>
+    <div id="left">
+        $:create_input("Sequence 1", "minimum = 100, maximum = 20000", "seq1")
+        $:create_input("Sequence 2", "minimum = 15, maximum = 17000", "seq2")
+        <input type="submit" value="Go" id="submit_button" />
+    </div>
+
+    <div id="right">
+        <h2>Output</h2> 
+        <br />
+        $:create_output("Length of Sequence 1", "seq1_len")
+        $:create_output("Length of Sequence 2", "seq2_len")
+        $if privilege == 1:
+            $:create_output("No. Cs + No. Gs", "cg_occurrence")
+        <br />
+        <div id="output_seq">
+            <h4>Output Sequence: </h4>
+            <div id="output_text">
+                <textarea class="readonly tracked" id="output_textarea" cols="50" rows="10" placeholder="Output sequence will go here"></textarea>
+                $:create_pos_tracker("Output Sequence", "output_textarea")
+            </div>
+        </div>
+        
+    </div>
+</div>

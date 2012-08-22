@@ -1,0 +1,52 @@
+textarea
+{
+    resize: none;
+}
+
+div#container
+{
+    height: auto;
+    position: relative;
+    width: 968px;
+    margin: 0px auto;
+    text-align: center;
+}
+
+div#top
+{
+    margin-bottom: 5%;
+    height: auto !important;
+}
+
+div#app
+{
+    height: auto;
+    position: relative;
+    text-align: center;
+    font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+    margin: auto;
+}
+
+div#left
+{
+    float: left;
+    width: 50%;
+}
+
+div#right
+{
+    float: right;
+    width: 50%;
+}
+
+.output
+{
+    text-align: left;
+    margin-top: 10px;
+}
+
+#output_seq
+{
+    text-align: left;
+    margin-top: 48px;
+}
