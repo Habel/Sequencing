@@ -1,4 +1,7 @@
 import web
+from google.appengine.ext import db
+from gaesessions import get_current_session
+from DatabaseEntities import User
 
 urls = (
     '', 'Login',
@@ -8,8 +11,9 @@ login = web.application(urls, locals())
 
 class Login():
     def GET(self):
-        if web.ctx.session.login == 1:
-            raise web.seeother('/', absolute = True)
+        session = get_current_session()
+        if session.is_active():
+            raise web.seeother('/', absolute=True)
         else:
             return web.ctx.render.login(0)
     def POST(self):
@@ -22,17 +26,15 @@ class Login():
             1 - bad username
             2 - bad password
         """
-
-        db = web.ctx.db
-        user = list(db.select('users', where="name='" + username + "'"))
-        if len(user) == 0:
+        user = db.GqlQuery("SELECT * FROM User WHERE name=:1", username).get()
+        if user == None:
             return web.ctx.render.login(1)
-
-        info = user[0]
-        if info.password != password:
+        elif user.pw != password:
             return web.ctx.render.login(2)
 
-        web.ctx.session.login = 1;
-        web.ctx.session.privilege = info.privilege
+        session = get_current_session()
+        session['privilege'] = user.privilege
+        session['login'] = 1
+
         raise web.seeother('/', absolute=True)
 

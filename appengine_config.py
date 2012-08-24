@@ -1,0 +1,8 @@
+from gaesessions import SessionMiddleware
+
+COOKIE_KEY = """\xf4`K&\x8f\xf7\xfe}\x9a\x8c\t\xec\xcc\xfb\xb1\xcc\x87\xf0\xd0?>mg&\xf5\xe1\xcb
+\xc6\xc0Yx&\x8b\xcb\xe1@z\xfd\xd7\x02\xf3k:h\xa9\xba\x1e\xb6{\r\xea\x89J~Y\xd9S\
+xf1\xd6v]n\xf1\xdb"""
+def webapp_add_wsgi_middleware(app):
+    app = SessionMiddleware(app, COOKIE_KEY)
+    return app

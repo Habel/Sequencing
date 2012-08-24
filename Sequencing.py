@@ -1,4 +1,5 @@
 import web
+from gaesessions import get_current_session
 
 urls = (
     '', 'Sequencing',
@@ -28,26 +29,7 @@ def count_occurrences(char, seq):
 
 class Sequencing():
     def GET(self):
-        if web.ctx.session.login != 1:
+        session = get_current_session()
+        if not session.is_active():
             raise web.seeother('/login', absolute = True)
-        return web.ctx.render.sequencing(web.ctx.session.privilege)
-    def POST(self):
-        i = web.input()
-
-        seq1 = i.seq1
-        seq2 = i.seq2
-
-        if(seq1 == ""):
-            return web.ctx.render.sequencing(web.ctx.session.privilege)
-        elif(seq2 == ""):
-            return web.ctx.render.sequencing(web.ctx.session.privilege)
-
-        len1 = len(seq1)
-        len2 = len(seq2)
-
-        seq1_num_c = count_occurrences('c', seq1)
-        seq1_num_g = count_occurrences('g', seq1)
-
-        output = [len1, len2, seq1_num_c + seq1_num_g]
-        return web.ctx.render.sequencing(web.ctx.session.privilege)
-
+        return web.ctx.render.sequencing(session['privilege'])
