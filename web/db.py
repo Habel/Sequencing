@@ -11,7 +11,7 @@ __all__ = [
   "database", 'DB',
 ]
 
-import time
+import time, os
 try:
     import datetime
 except ImportError:
@@ -926,6 +926,8 @@ class PostgresDB(DB):
         if db_module.__name__ == "psycopg2":
             import psycopg2.extensions
             psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+        if db_module.__name__ == "pgdb" and 'port' in keywords:
+            keywords["host"] += ":" + str(keywords.pop('port'))
 
         # if db is not provided postgres driver will take it from PGDATABASE environment variable
         if 'db' in keywords:
@@ -1042,10 +1044,11 @@ class FirebirdDB(DB):
             db = None
             pass
         if 'pw' in keywords:
-            keywords['passwd'] = keywords['pw']
-            del keywords['pw']
-        keywords['database'] = keywords['db']
-        del keywords['db']
+            keywords['password'] = keywords.pop('pw')
+        keywords['database'] = keywords.pop('db')
+
+        self.paramstyle = db.paramstyle
+
         DB.__init__(self, db, keywords)
         
     def delete(self, table, where=None, using=None, vars=None, _test=False):
@@ -1131,6 +1134,22 @@ class OracleDB(DB):
         else:
             return query + "; SELECT %s.currval FROM dual" % seqname 
 
+def dburl2dict(url):
+    """
+    Takes a URL to a database and parses it into an equivalent dictionary.
+    
+        >>> dburl2dict('postgres://james:day@serverfarm.example.net:5432/mygreatdb')
+        {'host': 'serverfarm.example.net', 'pw': 'day', 'dbn': 'postgres', 'db': 'mygreatdb', 'port': '5432', 'user': 'james'}
+    
+    """
+    dbn, rest = url.split('://', 1)
+    user, rest = rest.split(':', 1)
+    pw, rest = rest.split('@', 1)
+    host, rest = rest.split(':', 1)
+    port, rest = rest.split('/', 1)
+    db = rest
+    return dict(dbn=dbn, user=user, pw=pw, host=host, port=port, db=db)
+
 _databases = {}
 def database(dburl=None, **params):
     """Creates appropriate database using params.
@@ -1138,6 +1157,10 @@ def database(dburl=None, **params):
     Pooling will be enabled if DBUtils module is available. 
     Pooling can be disabled by passing pooling=False in params.
     """
+    if not dburl and not params:
+        dburl = os.environ['DATABASE_URL']
+    if dburl:
+        params = dburl2dict(dburl)
     dbn = params.pop('dbn')
     if dbn in _databases:
         return _databases[dbn](**params)

@@ -12,7 +12,7 @@ login = web.application(urls, locals())
 class Login():
     def GET(self):
         session = get_current_session()
-        if session.is_active():
+        if session.is_active() and session['login'] == 1:
             raise web.seeother('/', absolute=True)
         else:
             return web.ctx.render.login(0)

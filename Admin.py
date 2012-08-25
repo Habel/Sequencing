@@ -1,11 +1,11 @@
 import web
+#from urlparse import urlparse, parse_qsl
 from google.appengine.ext import db
 from DatabaseEntities.User import User
 
 urls = (
-    '', 'Admin',
-    '/', 'Admin',
     '/Add_User', 'Add_User',
+    '', 'Admin',
 )
 
 admin = web.application(urls, locals())
@@ -15,8 +15,14 @@ admin = web.application(urls, locals())
 # 1 - user is already created and stored
 
 class Admin():
-    def GET(self):
-        return web.ctx.render.admin(0)
+    def GET(self, error = 0):
+        #parsed_url = urlparse(web.ctx.fullpath)
+        #args       = dict(parse_qsl(parsed_url.query))
+        #try:
+            #error = args['error']
+        #except KeyError:
+            #pass
+        return web.ctx.render.admin(int(error))
 
 class Add_User():
     def POST(self):
@@ -30,5 +36,6 @@ class Add_User():
         user = db.GqlQuery("SELECT * FROM User WHERE name=:1", name).get()
         if(user == None):
             User(name = name, pw = pw, privilege = privilege).put()
-
-        return web.ctx.render.admin(1)
+            raise web.seeother('?error=0')
+        else:
+            raise web.seeother('?error=1')

@@ -11,12 +11,12 @@ $# 1 - user already created
 
     <div id="content">
         $if error_code == 1:
-            <h1>That user has already been created/</h1><br />
+            <h2 class="error">That user has already been created</h1><br />
         <form method="post" action="/admin/Add_User">
             <h2>New Username: <input type="text" name="username" /></h2>
             <h2>New Password: <input type="password" name="password" /></h2>
             <h2>Privilege: </h2>
-            <input type="radio" name="privilege" value="1" />Can see no. c + no. g <br />
+            <input type="radio" name="privilege" value="1" checked/>Can see no. c + no. g <br />
             <input type="radio" name="privilege" value="0" />Can not see no. c + no. g <br /> 
             <br />
             <input type="submit" value="New User" />

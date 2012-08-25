@@ -27,16 +27,15 @@ app.add_processor(web.loadhook(session_hook))
 class Index():
     def GET(self):
         session = get_current_session()
-        if session.is_active():
+        if session.is_active() and session['login'] == 1:
             return web.seeother('/sequencing')
         else:
             return web.seeother('/login')
 
 class Logout():
     def GET(self):
-        session.login = 0
+        session = get_current_session()
+        session['login'] = 0
         raise web.seeother('/')
 
-if __name__ == "__main__":
-    app.cgirun()
-
+app = app.gaerun()

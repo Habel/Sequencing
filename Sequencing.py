@@ -30,6 +30,6 @@ def count_occurrences(char, seq):
 class Sequencing():
     def GET(self):
         session = get_current_session()
-        if not session.is_active():
+        if session['login'] != 1:
             raise web.seeother('/login', absolute = True)
         return web.ctx.render.sequencing(session['privilege'])
